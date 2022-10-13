@@ -42,6 +42,10 @@ jobs:
         run: |
           npm ci
           npm run build --if-present
+      #- uses: actions/upload-artifact@v3 #este no acepta working-directory
+      #  with:
+      #    name: dependencies
+      #    path: ./hangman-api/node_modules/
 
   test:
     runs-on: ubuntu-latest
