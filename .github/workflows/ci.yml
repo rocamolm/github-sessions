@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-        with: 
+        with:
           node-version: 16
           cache: npm
           cache-dependency-path: hangman-api/package-lock.json
@@ -22,19 +22,58 @@ jobs:
         working-directory: ./hangman-api
         run: |
           npm ci
-          npm run build --if-present
-
+          npm run build --if-presentt
   
   test:
     runs-on: ubuntu-latest
+
     needs: build
+
     steps:
-      - uses: actions/setup-node@v3
-        with: 
-          node-version: 16
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - name: test
         working-directory: ./hangman-api
-        run: |
+        run: | 
           npm ci
           npm test
+
+  test-integration:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14-alpine   
+        env:
+          POSTGRES_USER: postgres 
+          POSTGRES_PASSWORD: postgres 
+          POSTGRES_DB: hangman_db 
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v3 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Running integration tests 
+        working-directory: ./hangman-api
+        env:
+          DATABASE_PORT: 5432
+          DATABASE_HOST: localhost
+          DATABASE_NAME: hangman_db
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: postgres
+          DATABASE_POOL_MIN: 2
+          DATABASE_POOL_MAX: 10
+        run: |
+          npm ci 
+          npx knex migration:latest --env development  
+          npm run test:integration
