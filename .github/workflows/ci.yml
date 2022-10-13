@@ -42,7 +42,7 @@ jobs:
 
   test-integration:
     runs-on: ubuntu-latest
-
+    needs: test
     services:
       postgres:
         image: postgres:14-alpine   
@@ -75,5 +75,5 @@ jobs:
           DATABASE_POOL_MAX: 10
         run: |
           npm ci 
-          npx knex migration:latest --env development  
+          npx knex migrate:latest --env development  
           npm run test:integration
