@@ -20,6 +20,4 @@ jobs:
           pwd
           node -v
           docker version
-          docker compose version
-          java version
-    
+          docker compose version    
