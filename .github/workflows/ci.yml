@@ -23,6 +23,7 @@ jobs:
           docker version
           docker compose version  
       - name: build and test
+        working-directory: ./hangman-api
         run: |
           npm ci
           npm run build --if-present
