@@ -13,10 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v3
       - name: inspect
         run: |
           ls -al
-          echo Qui soc? ${whoami}
+          echo Qui soc? $(whoami)
           pwd
           node -v
           docker version
